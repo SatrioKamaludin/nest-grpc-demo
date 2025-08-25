@@ -16,4 +16,5 @@ export interface HelloServiceClient {
   findUserById(data: {
     id: string;
   }): Observable<{ id: string; name: string; isDeleted: boolean }>;
+  deleteUser(data: { id: string }): Observable<{ success: boolean }>;
 }

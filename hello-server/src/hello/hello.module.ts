@@ -7,13 +7,14 @@ import { User } from './entities/user.entity';
 import { GetAllUsersHandler } from './queries/handlers/get-all-users.handler';
 import { Repository } from 'typeorm';
 import { GetUserByIdHandler } from './queries/handlers/get-user-by-id.handler';
+import { DeleteUserHandler } from './commands/handler/delete-user.handler';
 
 export const QueryHandler = [
   SayHelloHandler,
   GetAllUsersHandler,
   GetUserByIdHandler,
 ];
-export const CommandHandler = [];
+export const CommandHandler = [DeleteUserHandler];
 
 @Module({
   imports: [CqrsModule, TypeOrmModule.forFeature([User])],
