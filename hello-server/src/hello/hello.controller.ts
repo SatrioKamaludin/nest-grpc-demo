@@ -7,6 +7,7 @@ import { UserDto } from './dto/user.dto';
 import { GetAllUsersQuery } from './queries/impl/get-all-users.query';
 import { GetUserByIdQuery } from './queries/impl/get-user-by-id.query';
 import { DeleteUserCommand } from './commands/impl/delete-user.command';
+import { UpdateUserCommand } from './commands/impl/update-user.command';
 
 @Controller()
 export class HelloController {
@@ -47,5 +48,17 @@ export class HelloController {
   @GrpcMethod('HelloService', 'DeleteUser')
   async deleteUser(data: { id: string }): Promise<{ success: boolean }> {
     return this.commandBus.execute(new DeleteUserCommand(data.id));
+  }
+
+  @GrpcMethod('HelloService', 'UpdateUser')
+  async updateUser(data: { id: string; name: string }) {
+    const user = await this.commandBus.execute(
+      new UpdateUserCommand(data.id, data.name),
+    );
+    return {
+      id: user.id,
+      name: user.name,
+      isDeleted: user.isDeleted,
+    };
   }
 }

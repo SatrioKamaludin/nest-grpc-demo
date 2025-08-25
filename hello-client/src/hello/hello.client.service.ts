@@ -1,7 +1,12 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { Client, ClientGrpc, Transport } from '@nestjs/microservices';
 import { join } from 'path';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { HelloServiceClient } from 'src/hello/hello.interface';
 
 @Injectable()
@@ -36,6 +41,28 @@ export class HelloClientService implements OnModuleInit {
   }
 
   async deleteUser(id: string) {
-    return this.helloService.deleteUser({ id });
+    try {
+      return await firstValueFrom(this.helloService.deleteUser({ id }));
+    } catch (error: any) {
+      if (error?.code === 5) {
+        throw new NotFoundException(error.details);
+      }
+      throw new InternalServerErrorException(
+        error.details || 'Internal Server Error',
+      );
+    }
+  }
+
+  async updateUser(id: string, name: string) {
+    try {
+      return await firstValueFrom(this.helloService.updateUser({ id, name }));
+    } catch (error: any) {
+      if (error?.code === 5) {
+        throw new NotFoundException(error.details);
+      }
+      throw new InternalServerErrorException(
+        error.details || 'Internal Server Error',
+      );
+    }
   }
 }

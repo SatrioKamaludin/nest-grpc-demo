@@ -7,6 +7,7 @@ service HelloService {
   rpc FindAllUsers (Empty) returns (FindAllUsersReply);
   rpc FindUserById (FindUserByIdRequest) returns (User);
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply);
+  rpc UpdateUser (UpdateUserRequest) returns (User);
 }
 
 message HelloRequest {
@@ -39,4 +40,9 @@ message DeleteUserRequest {
 
 message DeleteUserReply {
   bool success = 1;
+}
+
+message UpdateUserRequest {
+  string id = 1;
+  string name = 2;
 }
