@@ -1,7 +1,8 @@
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { GoodbyeService } from './goodbye.service';
 import { GoodbyeReply, GoodbyeRequest } from './goodbye.interface';
+import { QueryBus } from '@nestjs/cqrs';
+import { SayGoodbyeQuery } from './queries/impl/goodbye-query';
 
 @Controller()
 export class GoodbyeController {
@@ -10,12 +11,14 @@ export class GoodbyeController {
 
   private readonly logger = new Logger(GoodbyeController.name);
 
-  constructor(private readonly goodbyeService: GoodbyeService) {}
+  constructor(private readonly queryBus: QueryBus) {}
 
   @GrpcMethod('GoodbyeService', 'sayGoodbye')
-  sayHello(data: GoodbyeRequest): GoodbyeReply {
+  async sayHello(data: GoodbyeRequest): Promise<GoodbyeReply> {
     this.logger.log(`Received gRPC request: ${JSON.stringify(data)}`);
-    const response = this.goodbyeService.sayGoodbye(data);
+    const response = await this.queryBus.execute(
+      new SayGoodbyeQuery(data.name),
+    );
     this.logger.log(`Sending gRPC response: ${JSON.stringify(response)}`);
     return response;
   }
