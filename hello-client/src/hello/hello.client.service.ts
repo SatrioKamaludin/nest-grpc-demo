@@ -1,10 +1,17 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Client, ClientGrpc, Transport } from '@nestjs/microservices';
 import { join } from 'path';
+import { Observable } from 'rxjs';
 import { HelloReply, HelloRequest } from 'src/hello/hello.interface';
 
 interface HelloServiceGrpc {
   sayHello(data: HelloRequest): Promise<HelloReply>;
+  findAllUsers(data: {}): Observable<{
+    users: { id: string; name: string; isDeleted: boolean }[];
+  }>;
+  findUserById(data: {
+    id: string;
+  }): Observable<{ id: string; name: string; isDeleted: boolean }>;
 }
 
 @Injectable()
@@ -28,5 +35,13 @@ export class HelloClientService implements OnModuleInit {
 
   async greet(name: string) {
     return this.helloService.sayHello({ name });
+  }
+
+  async findAllUsers(): Promise<Observable<{ users: any[] }>> {
+    return this.helloService.findAllUsers({});
+  }
+
+  async findUserById(id: string) {
+    return this.helloService.findUserById({ id });
   }
 }

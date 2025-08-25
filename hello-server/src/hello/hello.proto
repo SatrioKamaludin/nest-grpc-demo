@@ -4,6 +4,8 @@ package hello;
 
 service HelloService {
   rpc sayHello (HelloRequest) returns (HelloReply) {}
+  rpc FindAllUsers (Empty) returns (FindAllUsersReply);
+  rpc FindUserById (FindUserByIdRequest) returns (User);
 }
 
 message HelloRequest {
@@ -12,4 +14,20 @@ message HelloRequest {
 
 message HelloReply {
   string message = 1;
+}
+
+message Empty {}
+
+message User {
+  string id = 1;
+  string name = 2;
+  bool isDeleted = 3;
+}
+
+message FindAllUsersReply {
+  repeated User users = 1;
+}
+
+message FindUserByIdRequest {
+  string id = 1;
 }
