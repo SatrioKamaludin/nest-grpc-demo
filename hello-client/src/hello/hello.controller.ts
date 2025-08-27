@@ -4,14 +4,22 @@ import {
   Delete,
   Get,
   Param,
+  Post,
   Put,
   Query,
 } from '@nestjs/common';
 import { HelloClientService } from './hello.client.service';
 import { firstValueFrom } from 'rxjs';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { DeleteUserDto } from './dto/delete-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @ApiTags('hello')
 @Controller('hello')
@@ -53,5 +61,14 @@ export class HelloController {
   @ApiResponse({ status: 404, description: 'User not found' })
   async updateUser(@Query('id') id: string, @Body() body: UpdateUserDto) {
     return this.helloClientService.updateUser(id, body.name);
+  }
+
+  @Post('users')
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid request' })
+  async createUser(@Body() dto: CreateUserDto) {
+    return this.helloClientService.createUser(dto.name);
   }
 }

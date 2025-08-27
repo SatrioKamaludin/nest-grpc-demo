@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -60,12 +61,24 @@ export class HelloClientService implements OnModuleInit {
     }
   }
 
-  private handleGrpcError(error: any) {
-    if (error?.code === 5) {
-      throw new NotFoundException(error.details);
+  async createUser(name: string) {
+    try {
+      return await firstValueFrom(this.helloService.createUser({ name }));
+    } catch (error: any) {
+      this.handleGrpcError(error);
     }
-    throw new InternalServerErrorException(
-      error.details || 'Internal Server Error',
-    );
+  }
+
+  private handleGrpcError(error: any) {
+    switch (error?.code) {
+      case 5:
+        throw new NotFoundException(error.details || 'User not found');
+      case 3:
+        throw new BadRequestException(error.details || 'Validation failed');
+      default:
+        throw new InternalServerErrorException(
+          error.details || 'Internal Server Error',
+        );
+    }
   }
 }

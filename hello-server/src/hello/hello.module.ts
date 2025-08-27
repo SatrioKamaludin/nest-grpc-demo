@@ -9,13 +9,18 @@ import { Repository } from 'typeorm';
 import { GetUserByIdHandler } from './queries/handlers/get-user-by-id.handler';
 import { DeleteUserHandler } from './commands/handler/delete-user.handler';
 import { UpdateUserHandler } from './commands/handler/update-user.handler';
+import { CreateUserHandler } from './commands/handler/create-user.handler';
 
 export const QueryHandler = [
   SayHelloHandler,
   GetAllUsersHandler,
   GetUserByIdHandler,
 ];
-export const CommandHandler = [DeleteUserHandler, UpdateUserHandler];
+export const CommandHandler = [
+  DeleteUserHandler,
+  UpdateUserHandler,
+  CreateUserHandler,
+];
 
 @Module({
   imports: [CqrsModule, TypeOrmModule.forFeature([User])],

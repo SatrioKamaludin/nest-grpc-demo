@@ -8,6 +8,7 @@ service HelloService {
   rpc FindUserById (FindUserByIdRequest) returns (User);
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply);
   rpc UpdateUser (UpdateUserRequest) returns (User);
+  rpc CreateUser (CreateUserRequest) returns (User);
 }
 
 message HelloRequest {
@@ -45,4 +46,8 @@ message DeleteUserReply {
 message UpdateUserRequest {
   string id = 1;
   string name = 2;
+}
+
+message CreateUserRequest {
+  string name = 1;
 }

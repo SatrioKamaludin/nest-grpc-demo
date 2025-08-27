@@ -1,4 +1,4 @@
-import { Controller, Logger } from '@nestjs/common';
+import { Controller, Logger, UsePipes } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { HelloReply, HelloRequest } from './hello.interface';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -8,6 +8,9 @@ import { GetAllUsersQuery } from './queries/impl/get-all-users.query';
 import { GetUserByIdQuery } from './queries/impl/get-user-by-id.query';
 import { DeleteUserCommand } from './commands/impl/delete-user.command';
 import { UpdateUserCommand } from './commands/impl/update-user.command';
+import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserCommand } from './commands/impl/create-user.command';
+import { GrpcValidationPipe } from 'src/common/pipes/grpc-validation.pipe';
 
 @Controller()
 export class HelloController {
@@ -60,5 +63,12 @@ export class HelloController {
       name: user.name,
       isDeleted: user.isDeleted,
     };
+  }
+
+  @GrpcMethod('HelloService', 'CreateUser')
+  @UsePipes(new GrpcValidationPipe())
+  async createUser(data: CreateUserDto) {
+    this.logger.log(`Received gRPC request: CreateUser with name ${data.name}`);
+    return this.commandBus.execute(new CreateUserCommand(data.name));
   }
 }
