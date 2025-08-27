@@ -37,19 +37,18 @@ export class HelloClientService implements OnModuleInit {
   }
 
   async findUserById(id: string) {
-    return this.helloService.findUserById({ id });
+    try {
+      return await firstValueFrom(this.helloService.findUserById({ id }));
+    } catch (error: any) {
+      this.handleGrpcError(error);
+    }
   }
 
   async deleteUser(id: string) {
     try {
       return await firstValueFrom(this.helloService.deleteUser({ id }));
     } catch (error: any) {
-      if (error?.code === 5) {
-        throw new NotFoundException(error.details);
-      }
-      throw new InternalServerErrorException(
-        error.details || 'Internal Server Error',
-      );
+      this.handleGrpcError(error);
     }
   }
 
@@ -57,12 +56,16 @@ export class HelloClientService implements OnModuleInit {
     try {
       return await firstValueFrom(this.helloService.updateUser({ id, name }));
     } catch (error: any) {
-      if (error?.code === 5) {
-        throw new NotFoundException(error.details);
-      }
-      throw new InternalServerErrorException(
-        error.details || 'Internal Server Error',
-      );
+      this.handleGrpcError(error);
     }
+  }
+
+  private handleGrpcError(error: any) {
+    if (error?.code === 5) {
+      throw new NotFoundException(error.details);
+    }
+    throw new InternalServerErrorException(
+      error.details || 'Internal Server Error',
+    );
   }
 }

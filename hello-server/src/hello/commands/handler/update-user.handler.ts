@@ -22,7 +22,6 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
       where: { id, isDeleted: false },
     });
     if (!user) {
-      console.error(`User not found with id=${id} and isDeleted=false`);
       throw new RpcException({ code: 5, message: 'User Not Found' });
     }
 

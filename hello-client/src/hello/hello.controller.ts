@@ -30,11 +30,14 @@ export class HelloController {
   }
 
   @Get('users/:id')
+  @ApiOperation({ summary: 'Get a user by ID' })
+  @ApiResponse({ status: 200, description: 'User found successfully' })
+  @ApiResponse({ status: 404, description: 'User not found' })
   async getUserById(@Param('id') id: string) {
-    return firstValueFrom(await this.helloClientService.findUserById(id));
+    return this.helloClientService.findUserById(id);
   }
 
-  @Delete('users/delete/:id')
+  @Delete('users/:id')
   @ApiOperation({ summary: 'Delete a user by ID' })
   @ApiQuery({ name: 'id', type: String, description: 'UUID of the user' })
   @ApiResponse({ status: 200, description: 'User deleted successfully' })
@@ -43,7 +46,7 @@ export class HelloController {
     return this.helloClientService.deleteUser(query.id);
   }
 
-  @Put('update')
+  @Put('users/:id')
   @ApiOperation({ summary: 'Update a user by ID' })
   @ApiQuery({ name: 'id', type: String, description: 'UUID of the user' })
   @ApiResponse({ status: 200, description: 'User updated successfully' })

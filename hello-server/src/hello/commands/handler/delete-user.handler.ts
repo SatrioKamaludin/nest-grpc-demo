@@ -13,12 +13,10 @@ export class DeleteUserHandler implements ICommandHandler<DeleteUserCommand> {
   ) {}
 
   async execute(command: DeleteUserCommand): Promise<{ success: boolean }> {
-    const { id } = command;
     const user = await this.userRepository.findOne({
       where: { id: command.id, isDeleted: false },
     });
     if (!user) {
-      console.error(`User not found with id=${id} and isDeleted=false`);
       throw new RpcException({ code: 5, message: 'User Not Found' });
     }
     user.isDeleted = true;

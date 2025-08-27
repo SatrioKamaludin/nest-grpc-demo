@@ -4,6 +4,7 @@ import { User } from '../../entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetUserByIdQuery } from '../impl/get-user-by-id.query';
+import { RpcException } from '@nestjs/microservices';
 
 @QueryHandler(GetUserByIdQuery)
 export class GetUserByIdHandler implements IQueryHandler<GetUserByIdQuery> {
@@ -13,8 +14,12 @@ export class GetUserByIdHandler implements IQueryHandler<GetUserByIdQuery> {
   ) {}
 
   async execute(_query: GetUserByIdQuery): Promise<User | null> {
-    return this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: { id: _query.id, isDeleted: false },
     });
+    if (!user) {
+      throw new RpcException({ code: 5, message: 'User Not Found' });
+    }
+    return user;
   }
 }
